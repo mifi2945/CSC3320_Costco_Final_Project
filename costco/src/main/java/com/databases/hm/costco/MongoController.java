@@ -36,6 +36,7 @@ public class MongoController {
                         .append("username", username)
                         .append("password", password);
                 users.insertOne(user);
+                return true;
             } else {
                 // user exists, check password
                 return result.getString("password").equals(password);
@@ -44,6 +45,5 @@ public class MongoController {
             System.err.println("Something went really wrong... " + e.getMessage());
             return false;
         }
-        return false;
     }
 }
