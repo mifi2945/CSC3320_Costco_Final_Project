@@ -2,22 +2,108 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 100vh;
+    /* background: linear-gradient(135deg, #e32a36 0%, #8b1a25 100%); */
+    margin: 0;
+    font-family: Arial, sans-serif;
 }
+
 .loginContainer {
     display: flex;
     flex-direction: column;
-    height: 60vh;
+    height: auto;
     width: 50vh;
-    /* background-color: #e32a36; */
-    border: 2px solid black;
-    border-radius: 10px;
+    background-color: white;
+    border: 3px solid #e32a36;
+    border-radius: 15px;
     justify-content: center;
+    padding: 40px;
+    /* box-shadow: 0 10px 30px rgba(227, 42, 54, 0.3); */
 }
+
+.costcoLogo {
+    width: 200px;
+    height: auto;
+    margin: 0 auto 20px auto;
+    display: block;
+}
+
 .loginTitle{
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 5vh;
     font-weight: bold;
-    margin-bottom: 5vh;
+    margin-bottom: 3vh;
+    color: #e32a36;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.loginForm {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.formGroup label {
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+}
+
+.formGroup input {
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.formGroup input:focus {
+    outline: none;
+    border-color: #e32a36;
+    box-shadow: 0 0 0 3px rgba(227, 42, 54, 0.1);
+}
+
+.loginBtn {
+    padding: 14px;
+    background-color: #e32a36;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.loginBtn:hover {
+    background-color: #c4222f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(227, 42, 54, 0.3);
+}
+
+.loginBtn:active {
+    transform: translateY(0);
+}
+
+.errorMessage {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    border: 1px solid #f5c6cb;
+    text-align: center;
+    font-weight: 500;
 }

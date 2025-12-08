@@ -1,58 +1,23 @@
-import { useState } from 'react';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
+import Login from './pages/Login.jsx';
+import Home from './pages/Home.jsx';
 
 function App() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    
-    // Send username and password as query parameters
-    const params = new URLSearchParams({
-      username: username,
-      password: password
-    });
-    
-    fetch(`http://localhost:8080/login?${params}`)
-      .then(response => response.json())
-      .then(data => {
-        console.log('Login successful:', data);
-        // Handle successful login here
-      })
-      .catch(error => {
-        console.error('Login error:', error);
-        // Handle error here
-      });
-  };
-
   return (
-    <div className="loginContainer">
-      <h2 className = "loginTitle">Login</h2>
-      <form className="loginForm" onSubmit={handleLogin}>
-        <div className="formGroup">
-          <label htmlFor="username">Username:</label>
-          <input
-            type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-        <div className="formGroup">
-         <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" className="loginBtn">Login</button>      
-      </form>
-    </div>
+    <BrowserRouter>
+      {/* Navigation
+      <nav>
+        <Link to="/">Home</Link> | <Link to="/login">Login</Link>
+      </nav> */}
+
+      {/* Routes */}
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
