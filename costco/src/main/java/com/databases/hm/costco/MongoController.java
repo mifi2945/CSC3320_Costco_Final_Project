@@ -9,13 +9,18 @@ import org.bson.Document;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
 import static com.mongodb.client.model.Filters.*;
+
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
+import org.springframework.boot.jackson.autoconfigure.JacksonProperties;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 public class MongoController {
     @GetMapping("/login")
     public boolean login(@RequestParam String username, @RequestParam String password) {
@@ -36,14 +41,23 @@ public class MongoController {
                         .append("username", username)
                         .append("password", password);
                 users.insertOne(user);
+
+                User.setUser(username);
                 return true;
-            } else {
+            } else if (result.getString("password").equals(password)){
                 // user exists, check password
-                return result.getString("password").equals(password);
-            }
+                    User.setUser(username);
+                    return true;
+            } else return false;
         } catch (Exception e) {
             System.err.println("Something went really wrong... " + e.getMessage());
             return false;
         }
     }
+
+//    @GetMapping("/search")
+//    public JacksonProperties.Json search(@RequestParam List<String> categories,
+//                                         @RequestParam String item) {
+
+//    }
 }
