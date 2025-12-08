@@ -22,16 +22,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 public class MongoController {
-    @GetMapping("/login")
-    public boolean login(@RequestParam String username, @RequestParam String password) {
+    private static MongoClient client;
+
+    /**
+     * Setup connection to project MongoDB cluster
+     */
+    public MongoController() {
         String db_user = System.getenv("MONGO_USER");
         String db_pw = System.getenv("MONGO_PW");
         String uri = "mongodb+srv://"+db_user+":"+db_pw+"@cluster-part1.adrc0k9.mongodb.net/";
-        try (MongoClient client = MongoClients.create(uri)) {
-            System.out.println("=> Connection successful");
-
+        client = MongoClients.create(uri);
+        System.out.println("=> Connection successful");
+    }
+    @GetMapping("/login")
+    public boolean login(@RequestParam String username, @RequestParam String password) {
             MongoCollection<Document> users = client.getDatabase("costco").getCollection("users");
-            System.out.println("=> Collection connected");
 
             Document result = users.find(eq("username", username)).first();
             // if user exists, check password match
@@ -49,15 +54,11 @@ public class MongoController {
                     User.setUser(username);
                     return true;
             } else return false;
-        } catch (Exception e) {
-            System.err.println("Something went really wrong... " + e.getMessage());
-            return false;
-        }
     }
 
 //    @GetMapping("/search")
 //    public JacksonProperties.Json search(@RequestParam List<String> categories,
 //                                         @RequestParam String item) {
-
+//
 //    }
 }
