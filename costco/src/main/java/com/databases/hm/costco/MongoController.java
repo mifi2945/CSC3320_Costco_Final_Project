@@ -56,9 +56,4 @@ public class MongoController {
             } else return false;
     }
 
-//    @GetMapping("/search")
-//    public JacksonProperties.Json search(@RequestParam List<String> categories,
-//                                         @RequestParam String item) {
-//
-//    }
 }
