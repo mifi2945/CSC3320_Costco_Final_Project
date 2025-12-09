@@ -1,8 +1,11 @@
 package com.databases.hm.costco;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 
@@ -13,11 +16,7 @@ import static com.mongodb.client.model.Filters.*;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
-import org.springframework.boot.jackson.autoconfigure.JacksonProperties;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
@@ -37,7 +36,6 @@ public class MongoController {
     @GetMapping("/login")
     public boolean login(@RequestParam String username, @RequestParam String password) {
             MongoCollection<Document> users = client.getDatabase("costco").getCollection("users");
-
             Document result = users.find(eq("username", username)).first();
             // if user exists, check password match
             if (result == null) {
@@ -54,6 +52,26 @@ public class MongoController {
                     User.setUser(username);
                     return true;
             } else return false;
+    }
+
+    @GetMapping("/search")
+    public List<Document> search(@RequestParam(defaultValue = "") String item) {
+        MongoCollection<Document> costco = client.getDatabase("costco").getCollection("costco");
+        Map<String, double[]> num_filters = User.filterGetNums();
+        List<String> keys = new ArrayList<>(num_filters.keySet());
+        List<String> categories = User.filterGetCategories();
+
+        AggregateIterable<Document> result = costco.aggregate(Arrays.asList(
+                new Document("$match",
+                        new Document("Title", new Document("$regex", item).append("$options", "i"))
+                                .append(keys.getFirst(), new Document("$gte", num_filters.get(keys.getFirst())[0])
+                                        .append("$lte", num_filters.get(keys.removeFirst())[1]))
+                                .append(keys.getFirst(), new Document("$gte", num_filters.get(keys.getFirst())[0])
+                                        .append("$lte", num_filters.get(keys.removeFirst())[1]))
+                                .append(keys.getFirst(), new Document("$gte", num_filters.get(keys.getFirst())[0])
+                                        .append("$lte", num_filters.get(keys.removeFirst())[1]))
+                                .append("Category", new Document(categories.isEmpty() ? "$nin" : "$in", categories)))));
+        return result.into(new ArrayList<>());
     }
 
 }
