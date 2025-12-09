@@ -14,7 +14,7 @@ import java.util.Map;
 @RequestMapping("/filters")
 @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 public class User {
-    public static final double UN_BOUND = -1;
+//    public static final double UN_BOUND = -1;
 
     private static String username;
     private static Map<String, double[]> num_filters;
@@ -23,9 +23,9 @@ public class User {
     public User() {
         categories = new ArrayList<>();
         num_filters = new HashMap<>(Map.ofEntries(
-                Map.entry("Price", new double[]{UN_BOUND, UN_BOUND}),
-                Map.entry("Discount", new double[]{UN_BOUND, UN_BOUND}),
-                Map.entry("Rating", new double[]{UN_BOUND, UN_BOUND})));
+                Map.entry("Price", new double[]{0, Double.POSITIVE_INFINITY}),
+                Map.entry("Discount", new double[]{0, Double.POSITIVE_INFINITY}),
+                Map.entry("Rating", new double[]{0, Double.POSITIVE_INFINITY})));
 
     }
 
@@ -36,8 +36,8 @@ public class User {
         return username;
     }
 
-    @GetMapping("/nums")
-    public Map<String, double[]> filterGetNums() {
+//    @GetMapping("/nums")
+    public static Map<String, double[]> filterGetNums() {
         return num_filters;
     }
     @PutMapping("/lower/{field}")
@@ -53,8 +53,8 @@ public class User {
         num_filters.put(field, new double[]{lower_bound, bound});
     }
 
-    @GetMapping("/categories")
-    public List<String> filterGetCategories() {
+//    @GetMapping("/categories")
+    public static List<String> filterGetCategories() {
         return categories;
     }
     @PutMapping("/categories/{category}")
@@ -72,7 +72,7 @@ public class User {
     public void filterClear() {
         categories.clear();
         for (String field : num_filters.keySet()) {
-            num_filters.put(field,  new double[]{UN_BOUND, UN_BOUND});
+            num_filters.put(field,  new double[]{0, Double.POSITIVE_INFINITY});
         }
     }
 }
