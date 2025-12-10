@@ -29,6 +29,7 @@ export default function Login() {
         console.log('Login response:', data);
         // Check if login was successful (backend returns true for success, false for failure)
         if (data === true) {
+          localStorage.setItem('username', username);
           navigate('/home');
         } else {
           setError('Login failed. Please check your credentials and try again.');
@@ -41,7 +42,8 @@ export default function Login() {
   };
 
   return (
-    <div className="loginContainer">
+    <div className="loginPage">
+      <div className="loginContainer">
       <img src="/assets/costco.png" alt="Costco Logo" className="costcoLogo" />
       <h2 className = "loginTitle">Login</h2>
       {error && <div className="errorMessage">{error}</div>}
@@ -68,6 +70,7 @@ export default function Login() {
         </div>
         <button type="submit" className="loginBtn">Login</button>      
       </form>
+      </div>
     </div>
   );
 }

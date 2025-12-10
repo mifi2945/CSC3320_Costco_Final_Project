@@ -1,0 +1,125 @@
+.productCard {
+    border: 3px solid #e32a36;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(227, 42, 54, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.productCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(227, 42, 54, 0.2);
+}
+
+.pill {
+    align-self: flex-start;
+    background: #ffe6e9;
+    color: #e32a36;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.itemHeader {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.itemHeader h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #1f1f1f;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+}
+
+.ratingNum {
+    color: #666;
+    font-size: 13px;
+}
+
+.description {
+    color: #444;
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.features {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 8px;
+    border-left: 3px solid #e32a36;
+}
+
+.features strong {
+    color: #e32a36;
+    font-size: 13px;
+}
+
+.features .muted {
+    margin: 4px 0 0 0;
+    color: #666;
+    font-size: 13px;
+}
+
+.priceSection {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+}
+
+.price {
+    font-size: 24px;
+    font-weight: 800;
+    color: #e32a36;
+}
+
+.originalPrice {
+    display: none;
+}
+
+
+.discountBadge {
+    background: #e32a36;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.addBtn {
+    background: #e32a36;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    transition: background-color 0.2s;
+}
+
+.addBtn:hover:not(:disabled) {
+    background: #c4222f;
+}
+
+.addBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
