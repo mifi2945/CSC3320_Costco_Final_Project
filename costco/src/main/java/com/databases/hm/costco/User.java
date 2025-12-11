@@ -53,12 +53,16 @@ public class User {
         ObjectId item = new ObjectId(itemId);
         MongoCollection<Document> users = MongoController.getClient()
                 .getDatabase("costco").getCollection("users");
-//        Document user = users.aggregate(Arrays.asList(
-//                new Document("$match",
-//                        new Document("username", username)))).first();
-//        int quantity = user.getList("cart", Document.class);
+        Document user = users.aggregate(Arrays.asList(
+                new Document("$unwind", new Document("path", "$cart")),
+                new Document("$match", new Document("username", username)
+                        .append("cart.item_id", item)))).first();
+        int quantity = 1;
+        if  (user != null) {
+            quantity = user.getInteger("cart.quantity");
+        }
         users.updateOne(eq("username", username),
                 push("cart", new Document("item_id", item)
-                        .append("quantity", 1)));
+                        .append("quantity", quantity)));
     }
 }
