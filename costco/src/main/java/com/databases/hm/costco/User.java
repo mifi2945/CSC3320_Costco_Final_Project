@@ -1,11 +1,13 @@
 package com.databases.hm.costco;
 
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.web.bind.annotation.*;
 import static com.mongodb.client.model.Updates.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -64,5 +66,40 @@ public class User {
         users.updateOne(eq("username", username),
                 push("cart", new Document("item_id", item)
                         .append("quantity", quantity)));
+    }
+
+    @GetMapping("/cart_items")
+    public List<Document> getCartItems(@RequestParam String username) {
+        MongoCollection<Document> users = MongoController.getClient()
+                .getDatabase("costco").getCollection("users");
+
+        AggregateIterable<Document> result = users.aggregate(Arrays.asList(new Document("$match",
+                        new Document("username", "hayden")),
+                new Document("$unwind", "$cart"),
+                new Document("$group",
+                        new Document("_id", "$cart.item_id")
+                                .append("quantity",
+                                        new Document("$sum", 1L))),
+                new Document("$lookup",
+                        new Document("from", "costco")
+                                .append("localField", "_id")
+                                .append("foreignField", "_id")
+                                .append("as", "product")),
+                new Document("$unwind", "$product")));
+
+        // Collect all aggregated documents into a list
+        List<Document> list = new ArrayList<>();
+        for (Document doc : result) {
+            list.add(doc);
+        }
+
+        // Convert ObjectId to hex string if needed
+        for (Document doc : list) {
+            if (doc.get("_id") instanceof ObjectId) {
+                doc.put("_id", doc.getObjectId("_id").toHexString());
+            }
+        }
+
+        return list;
     }
 }

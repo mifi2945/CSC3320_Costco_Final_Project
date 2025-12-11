@@ -6,29 +6,25 @@ export default function Cart() {
     const [cartItems, setCartItems] = useState([]);
 
     useEffect(() => {
-        // Load cart from localStorage
-        const savedCart = localStorage.getItem('cart');
-        if (savedCart) {
-            setCartItems(JSON.parse(savedCart));
-        }
+        fetch('http://localhost:8080/user/cart_items?username=' + localStorage.getItem('username'))
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to load cart items');
+                }
+                return response.json();
+            })
+            .then(data => setCartItems(data))
+            .catch(err => console.error('Error fetching cart items:', err));
     }, []);
 
     // Combine items by title and count quantities
     const getCartSummary = () => {
-        const summary = {};
-        cartItems.forEach(item => {
-            if (summary[item.Title]) {
-                summary[item.Title].quantity += 1;
-            } else {
-                summary[item.Title] = {
-                    title: item.Title,
-                    price: item.Price || 0,
-                    discount: item.Discount || 0,
-                    quantity: 1
-                };
-            }
-        });
-        return Object.values(summary);
+        return cartItems.map(cartItem => ({
+            title: cartItem.product.Title,
+            price: cartItem.product.Price || 0,
+            discount: cartItem.product.Discount || 0,
+            quantity: cartItem.quantity
+        }));
     };
 
     // Calculate total
