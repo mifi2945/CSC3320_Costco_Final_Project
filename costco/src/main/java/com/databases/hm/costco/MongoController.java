@@ -38,7 +38,7 @@ public class MongoController {
         return client;
     }
 
-    @GetMapping("/login")
+    @PutMapping("/login")
     public boolean login(@RequestParam String username, @RequestParam String password) {
             MongoCollection<Document> users = client.getDatabase("costco").getCollection("users");
             Document result = users.find(eq("username", username)).first();
@@ -47,7 +47,8 @@ public class MongoController {
                 // create user
                 Document user = new Document("_id", new ObjectId())
                         .append("username", username)
-                        .append("password", password);
+                        .append("password", password)
+                        .append("cart", List.of());
                 users.insertOne(user);
 
                 User.setUser(username);
