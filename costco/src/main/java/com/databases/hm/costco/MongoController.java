@@ -77,7 +77,12 @@ public class MongoController {
                                 .append(keys.getFirst(), new Document("$gte", num_filters.get(keys.getFirst())[0])
                                         .append("$lte", num_filters.get(keys.removeFirst())[1]))
                                 .append("Category", new Document(categories.isEmpty() ? "$nin" : "$in", categories)))));
-        return result.into(new ArrayList<>());
+
+        List<Document> list = result.into(new ArrayList<>());
+        list.forEach((doc) -> {
+            doc.put("_id", new Document("oid", doc.getObjectId("_id").toHexString()));
+        });
+        return list;
     }
 
 }
