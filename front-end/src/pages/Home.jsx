@@ -15,8 +15,6 @@ export default function Home() {
   const [showFilters, setShowFilters] = useState(false);
   const [priceMin, setPriceMin] = useState(0);
   const [priceMax, setPriceMax] = useState(1000);
-  const [discountMin, setDiscountMin] = useState(0);
-  const [discountMax, setDiscountMax] = useState(1000);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [availableCategories, setAvailableCategories] = useState([]);
 
@@ -56,8 +54,6 @@ export default function Home() {
     console.log(item._id.oid);
     fetch(`http://localhost:8080/user/add_to_cart?itemId=${item._id.oid}`, {
       method: 'PUT',
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(item._id),
     })
       .then(response => {
         if (!response.ok) {
@@ -139,6 +135,7 @@ export default function Home() {
                 <img src="/assets/costco.png" alt="Costco Logo" className="costcoLogo" />
             </Link>
             <div className="topBarIcons">
+                <Link to="/discounts" className="discountsIcon">Discounts</Link>
               <Link to="/cart" state={{ cartItems }} className="cartIcon">
                   <img src="/assets/shoppingcart.png" alt="Shopping Cart" />
                   {cartItems.length > 0 && <span className="cartBadge">{cartItems.length}</span>}

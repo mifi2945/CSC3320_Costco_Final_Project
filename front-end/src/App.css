@@ -157,6 +157,12 @@ body {
     height: 60px;
     border-radius: 8px;
 }
+.discountsIcon {
+    color: #e32a36;
+    padding: 10px 20px;
+    font-weight: 700;
+    font-size: 30px;
+}
 .profileIcon {
     position: relative;
     cursor: pointer;

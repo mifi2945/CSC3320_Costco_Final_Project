@@ -89,4 +89,18 @@ public class MongoController {
         return list;
     }
 
+    @GetMapping("/discount")
+    public List<Document> discount() {
+        MongoCollection<Document> costco = client.getDatabase("costco").getCollection("costco");
+        AggregateIterable<Document> result = costco.aggregate(Arrays.asList(new Document("$match",
+                new Document("Discount",
+                        new Document("$gt", 0L)))));
+
+        List<Document> list = result.into(new ArrayList<>());
+        list.forEach((doc) -> {
+            doc.put("_id", new Document("oid", doc.getObjectId("_id").toHexString()));
+        });
+        return list;
+    }
+
 }
