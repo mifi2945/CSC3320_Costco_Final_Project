@@ -33,6 +33,11 @@ public class MongoController {
         client = MongoClients.create(uri);
         System.out.println("=> Connection successful");
     }
+
+    public static MongoClient getClient() {
+        return client;
+    }
+
     @GetMapping("/login")
     public boolean login(@RequestParam String username, @RequestParam String password) {
             MongoCollection<Document> users = client.getDatabase("costco").getCollection("users");
@@ -57,9 +62,9 @@ public class MongoController {
     @GetMapping("/search")
     public List<Document> search(@RequestParam(defaultValue = "") String item) {
         MongoCollection<Document> costco = client.getDatabase("costco").getCollection("costco");
-        Map<String, double[]> num_filters = User.filterGetNums();
+        Map<String, double[]> num_filters = Filter.filterGetNums();
         List<String> keys = new ArrayList<>(num_filters.keySet());
-        List<String> categories = User.filterGetCategories();
+        List<String> categories = Filter.filterGetCategories();
 
         AggregateIterable<Document> result = costco.aggregate(Arrays.asList(
                 new Document("$match",
