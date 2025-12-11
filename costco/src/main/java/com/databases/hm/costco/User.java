@@ -74,7 +74,7 @@ public class User {
                 .getDatabase("costco").getCollection("users");
 
         AggregateIterable<Document> result = users.aggregate(Arrays.asList(new Document("$match",
-                        new Document("username", "hayden")),
+                        new Document("username", username)),
                 new Document("$unwind", "$cart"),
                 new Document("$group",
                         new Document("_id", "$cart.item_id")

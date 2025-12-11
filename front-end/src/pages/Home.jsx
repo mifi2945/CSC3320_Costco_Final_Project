@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../components/ItemCard.jsx';
 import ItemCard from '../components/ItemCard';
-import { Link } from 'react-router-dom';
-import Cart from './Cart.jsx';
+import TopBar from '../components/TopBar';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -11,10 +10,11 @@ export default function Home() {
   const [displayCount, setDisplayCount] = useState(20);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [cartItems, setCartItems] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [priceMin, setPriceMin] = useState(0);
   const [priceMax, setPriceMax] = useState(1000);
+  const [discountMin, setDiscountMin] = useState(0);
+  const [discountMax, setDiscountMax] = useState(1000);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [availableCategories, setAvailableCategories] = useState([]);
 
@@ -59,8 +59,8 @@ export default function Home() {
         if (!response.ok) {
           throw new Error('Failed to add item to cart');
         }
-        // Backend returns void, so just update local state
-        setCartItems(prev => [...prev, item]);
+        // Notify TopBar to refresh cart count
+        window.dispatchEvent(new Event('cart:updated'));
         console.log('Item added to cart:', item.Title);
       })
       .catch(error => {
@@ -130,21 +130,7 @@ export default function Home() {
   return (
     <div className="homePage">
       <div className="homeContainer">
-        <div className="topBar">
-            <Link to='/home'>
-                <img src="/assets/costco.png" alt="Costco Logo" className="costcoLogo" />
-            </Link>
-            <div className="topBarIcons">
-                <Link to="/discounts" className="discountsIcon">Discounts</Link>
-              <Link to="/cart" state={{ cartItems }} className="cartIcon">
-                  <img src="/assets/shoppingcart.png" alt="Shopping Cart" />
-                  {cartItems.length > 0 && <span className="cartBadge">{cartItems.length}</span>}
-              </Link>            
-              <Link to="/profile" className="profileIcon">
-                  <img src="/assets/profile.png" alt="Profile" />
-              </Link>            
-            </div>
-        </div>
+        <TopBar />
         <h1>Welcome to Costco</h1>
         
         <div className="searchBarContainer">

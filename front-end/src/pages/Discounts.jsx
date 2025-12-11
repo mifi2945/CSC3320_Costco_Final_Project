@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../components/ItemCard.jsx';
 import ItemCard from '../components/ItemCard';
 import { Link } from 'react-router-dom';
+import TopBar from '../components/TopBar';
 
 export default function Discounts() {
     const [allItems, setAllItems] = useState([]);
@@ -9,7 +10,6 @@ export default function Discounts() {
     const [displayCount, setDisplayCount] = useState(20);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [cartItems, setCartItems] = useState([]);
 
     const fetchItems = (query = '') => {
     setLoading(true);
@@ -51,7 +51,7 @@ export default function Discounts() {
         if (!response.ok) {
           throw new Error('Failed to add item to cart');
         }
-        // Backend returns void, so just update local state
+        window.dispatchEvent(new Event('cart:updated'));
         console.log('Item added to cart:', item.Title);
       })
       .catch(error => {
@@ -71,20 +71,7 @@ export default function Discounts() {
 
   return (
     <div className="cartPage">
-            <div className="topBar">
-                        <Link to='/home'>
-                            <img src="/assets/costco.png" alt="Costco Logo" className="costcoLogo" />
-                        </Link>
-                        <div className="topBarIcons">
-                          <Link to="/cart" state={{ cartItems }} className="cartIcon">
-                              <img src="/assets/shoppingcart.png" alt="Shopping Cart" />
-                              {cartItems.length > 0 && <span className="cartBadge">{cartItems.length}</span>}
-                          </Link>            
-                          <Link to="/profile" className="profileIcon">
-                              <img src="/assets/profile.png" alt="Profile" />
-                          </Link>            
-                        </div>
-                    </div>
+            <TopBar />
             <h2>Discounted Items</h2>
 
             <div className="productGrid">

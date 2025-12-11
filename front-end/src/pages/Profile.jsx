@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import TopBar from '../components/TopBar';
 
 export default function Profile() {
     const [username, setUsername] = useState('');
@@ -51,9 +52,7 @@ export default function Profile() {
 
     return (
         <div className="profilePage">
-            <Link to='/home'>
-                <img src="/assets/costco.png" alt="Costco Logo" className="costcoLogo" />
-            </Link>
+            <TopBar />
             <h2>User Profile</h2>
             <h4>Username: {username}</h4>
             {/* input field for new password */}

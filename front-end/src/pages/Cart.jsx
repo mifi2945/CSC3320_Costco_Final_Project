@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import TopBar from '../components/TopBar';
 import '../App.css';
 
 export default function Cart() {
@@ -36,9 +37,10 @@ export default function Cart() {
 
     return (
         <div className="cartPage">
-            <Link to='/home'>
-                <img src="/assets/costco.png" alt="Costco Logo" className="costcoLogoSmall" />
-            </Link>
+            <div className="homeContainer">
+                <TopBar />
+            </div>
+            
             <h2>Your Shopping Cart</h2>
             
             {cartItems.length === 0 ? (
@@ -68,6 +70,7 @@ export default function Cart() {
                     <h3>Total: ${calculateTotal().toFixed(2)}</h3>
                     <button className="orderButton">Place Order</button>
                 </div>
+                
             )}
         </div>
     );
