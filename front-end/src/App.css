@@ -106,6 +106,17 @@ body {
     font-weight: 500;
 }
 
+.successMessage {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 12px;
+    border-radius: 6px;
+    margin-top: 15px;
+    border: 1px solid #c3e6cb;
+    text-align: center;
+    font-weight: 500;
+}
+
 /* Home page simple layout */
 .homePage {
     min-height: 100vh;
@@ -185,7 +196,51 @@ body {
     font-weight: bold;
     border: 2px solid white;
 }
+.orderButton {
+    background: #e32a36;
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 16px;
+    margin-top: 20px;
+}
 
+.cartPage {
+    min-height: 100vh;
+    padding: 24px;
+}
+.profilePage {
+    min-height: 100vh;
+    padding: 24px;
+}
+.updatePasswordButton {
+    background: #e32a36;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 16px;
+    margin-top: 10px;
+}
+.logoutButton {
+    background: #e32a36;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 16px;
+    margin-top: 10px;
+}
 .costcoLogoHome {
     display: block;
     margin: 0 0 16px 0;
@@ -263,4 +318,109 @@ body {
 .loadMoreBtn:hover {
     background: #e32a36;
     color: white;
+}
+
+.filterToggleBtn {
+    color: #1f1f1f;
+    background-color: #fff;
+    border: 2px solid #e32a36;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+.filtersPanel {
+    background: #fff;
+    /* border: 2px solid #e32a36; */
+    border-radius: 8px;
+    padding: 12px;
+    margin: 15px 0;
+}
+
+.filterGroup {
+    margin-bottom: 10px;
+}
+
+.filterGroup label {
+    display: inline-block;
+    font-weight: 600;
+    margin-right: 8px;
+    color: #1f1f1f;
+    font-size: 13px;
+    width: 70px;
+}
+
+.filterInput {
+    width: 80px;
+    padding: 6px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 13px;
+    margin-right: 15px;
+    box-sizing: border-box;
+}
+
+.filterInput:focus {
+    outline: none;
+    border-color: #e32a36;
+    box-shadow: 0 0 4px rgba(227, 42, 54, 0.3);
+}
+
+.filterButtons {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.applyFiltersBtn {
+    background: #e32a36;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 13px;
+    flex: 1;
+}
+
+.clearFiltersBtn {
+    background: white;
+    color: #e32a36;
+    border: 1px solid #e32a36;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 13px;
+    flex: 1;
+}
+
+.clearFiltersBtn:hover {
+    background: #ffe0e0;
+}
+
+.categoryCheckbox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 13px;
+}
+
+.categoryCheckbox input[type="checkbox"] {
+    margin-right: 6px;
+    cursor: pointer;
+}
+
+.categoryCheckbox label {
+    margin: 0;
+    width: auto;
+    font-weight: 400;
+    cursor: pointer;
 }

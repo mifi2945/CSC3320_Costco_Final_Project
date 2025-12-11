@@ -12,6 +12,13 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [cartItems, setCartItems] = useState([]);
+  const [showFilters, setShowFilters] = useState(false);
+  const [priceMin, setPriceMin] = useState(0);
+  const [priceMax, setPriceMax] = useState(1000);
+  const [discountMin, setDiscountMin] = useState(0);
+  const [discountMax, setDiscountMax] = useState(1000);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [availableCategories, setAvailableCategories] = useState([]);
 
   const fetchItems = (query = '') => {
     setLoading(true);
@@ -45,6 +52,26 @@ export default function Home() {
       });
   };
 
+  const addToCart = (item) => {
+    console.log(item._id.oid);
+    fetch(`http://localhost:8080/user/add_to_cart?itemId=${item._id.oid}`, {
+      method: 'PUT',
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify(item._id),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to add item to cart');
+        }
+        // Backend returns void, so just update local state
+        setCartItems(prev => [...prev, item]);
+        console.log('Item added to cart:', item.Title);
+      })
+      .catch(error => {
+        console.error('Error adding item to cart:', error);
+      });
+  };
+
   const loadMore = () => {
     const newCount = displayCount + 20;
     setDisplayedItems(allItems.slice(0, newCount));
@@ -53,15 +80,55 @@ export default function Home() {
 
   useEffect(() => {
     fetchItems();
-    // Load cart from localStorage on page load
-    const savedCart = localStorage.getItem('cart');
-    if (savedCart) {
-      setCartItems(JSON.parse(savedCart));
-    }
   }, []);
+
+  // Update available categories whenever items change
+  useEffect(() => {
+    const categories = [...new Set(allItems.map(item => item.Category))].filter(Boolean);
+    setAvailableCategories(categories);
+  }, [allItems]);
 
   const handleSearch = () => {
     fetchItems(searchQuery);
+  };
+
+  const applyFilters = () => {
+    let promise = Promise.resolve();
+    
+    // Add selected categories
+    selectedCategories.forEach(category => {
+      promise = promise.then(() => 
+        fetch(`http://localhost:8080/filters/categories/${encodeURIComponent(category)}`, { method: 'PUT' })
+      );
+    });
+    
+    // Apply price filters
+    promise = promise
+      .then(() => fetch(`http://localhost:8080/filters/lower/Price?bound=${priceMin}`, { method: 'PUT' }))
+      .then(() => fetch(`http://localhost:8080/filters/upper/Price?bound=${priceMax}`, { method: 'PUT' }))
+      .then(() => fetchItems(searchQuery))
+      .catch(error => console.error('Error applying filters:', error));
+  };
+
+  const clearFilters = () => {
+    fetch(`http://localhost:8080/filters/clear`, { method: 'DELETE' })
+      .then(() => {
+        setPriceMin(0);
+        setPriceMax(1000);
+        setDiscountMin(0);
+        setDiscountMax(1000);
+        setSelectedCategories([]);
+        fetchItems(searchQuery);
+      })
+      .catch(error => console.error('Error clearing filters:', error));
+  };
+
+  const handleCategoryToggle = (category) => {
+    setSelectedCategories(prev => 
+      prev.includes(category)
+        ? prev.filter(c => c !== category)
+        : [...prev, category]
+    );
   };
 
   return (
@@ -93,7 +160,52 @@ export default function Home() {
             className="searchInput"
           />
           <button className="searchButton" onClick={handleSearch}>Search</button>
+          <button className="filterToggleBtn" onClick={() => setShowFilters(!showFilters)}>
+            {showFilters ? 'Hide Filters' : 'Show Filters'}
+          </button>
         </div>
+
+        {showFilters && (
+          <div className="filtersPanel">
+            <h3>Filters</h3>
+            <div className="filterGroup">
+              <label>Min Price:</label>
+              <input 
+                type="number" 
+                value={priceMin}
+                onChange={(e) => setPriceMin(Number(e.target.value))}
+                className="filterInput"
+                placeholder="0"
+              />
+              <label>Max Price:</label>
+              <input 
+                type="number" 
+                value={priceMax}
+                onChange={(e) => setPriceMax(Number(e.target.value))}
+                className="filterInput"
+                placeholder="1000"
+              />
+            </div>
+            <div className="filterGroup">
+              <label>Categories:</label>
+              {availableCategories.map(category => (
+                <div key={category} className="categoryCheckbox">
+                  <input 
+                    type="checkbox" 
+                    id={`cat-${category}`}
+                    checked={selectedCategories.includes(category)}
+                    onChange={() => handleCategoryToggle(category)}
+                  />
+                  <label htmlFor={`cat-${category}`}>{category}</label>
+                </div>
+              ))}
+            </div>
+            <div className="filterButtons">
+              <button className="applyFiltersBtn" onClick={applyFilters}>Apply</button>
+              <button className="clearFiltersBtn" onClick={clearFilters}>Clear</button>
+            </div>
+          </div>
+        )}
 
         {loading && <p className="muted">Loading items...</p>}
         {error && <p className="errorMessage">{error}</p>}
@@ -109,12 +221,7 @@ export default function Home() {
                 price={item.Price}
                 discount={item.Discount}
                 rating={item.Rating}
-                onAddToCart={() => {
-                  const updatedCart = [...cartItems, item];
-                  setCartItems(updatedCart);
-                  localStorage.setItem('cart', JSON.stringify(updatedCart));
-                  console.log('Added to cart:', item);
-                }}
+                onAddToCart={() => addToCart(item)}
               />
             ))}
         </div>

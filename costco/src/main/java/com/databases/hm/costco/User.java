@@ -49,7 +49,8 @@ public class User {
     }
 
     @PutMapping("/add_to_cart")
-    public void addToCart(@RequestBody ObjectId item) {
+    public void addToCart(@RequestParam String itemId) {
+        ObjectId item = new ObjectId(itemId);
         MongoCollection<Document> users = MongoController.getClient()
                 .getDatabase("costco").getCollection("users");
 //        Document user = users.aggregate(Arrays.asList(

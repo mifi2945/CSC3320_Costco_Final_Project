@@ -18,7 +18,7 @@ export default function Login() {
       password: password
     });
     
-    fetch(`http://localhost:8080/login?${params}`)
+    fetch(`http://localhost:8080/login?${params}`, { method: 'PUT' })
       .then(response => {
         if (!response.ok) {
           throw new Error('Login failed');

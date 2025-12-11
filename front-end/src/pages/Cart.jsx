@@ -70,6 +70,7 @@ export default function Cart() {
                         </tbody>
                     </table>
                     <h3>Total: ${calculateTotal().toFixed(2)}</h3>
+                    <button className="orderButton">Place Order</button>
                 </div>
             )}
         </div>
