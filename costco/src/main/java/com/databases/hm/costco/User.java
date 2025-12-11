@@ -59,7 +59,7 @@ public class User {
                         .append("cart.item_id", item)))).first();
         int quantity = 1;
         if  (user != null) {
-            quantity = user.getInteger("cart.quantity");
+            quantity = user.get("cart", Document.class).getInteger("quantity");
         }
         users.updateOne(eq("username", username),
                 push("cart", new Document("item_id", item)
