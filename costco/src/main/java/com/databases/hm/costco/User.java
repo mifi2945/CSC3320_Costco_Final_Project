@@ -136,10 +136,47 @@ public class User {
                                         new Document("$sum", "$total")))));
 
         double total = result.first().getDouble("total");
+        addOrder(total);
         users.updateOne(eq("username", username),
                 set("cart", List.of()));
 
         return total;
 
+    }
+
+    private static void addOrder(double total) {
+        MongoCollection<Document> users = MongoController.getClient()
+                .getDatabase("costco").getCollection("users");
+        MongoCollection<Document> orders = MongoController.getClient()
+                .getDatabase("costco").getCollection("orders");
+
+        AggregateIterable<Document> result = users.aggregate(Arrays.asList(new Document("$match",
+                        new Document("username", username)),
+                new Document("$unwind",
+                        new Document("path", "$cart")),
+                new Document("$group",
+                        new Document("_id", "$cart.item_id")
+                                .append("quantity",
+                                        new Document("$count",
+                                                new Document()))),
+                new Document("$lookup",
+                        new Document("from", "costco")
+                                .append("localField", "_id")
+                                .append("foreignField", "_id")
+                                .append("as", "product")),
+                new Document("$unwind",
+                        new Document("path", "$product"))));
+
+        List<Document> cart = result.into(new ArrayList<>());
+        Document order = new Document("_id", new ObjectId())
+                .append("username", username)
+                .append("items", List.of())
+                .append("total", total);
+        for (Document item : cart) {
+            Document doc =  new Document("_id", item.getObjectId("_id"))
+                    .append("quantity", item.getDouble("quantity"));
+            order.getList("items", Document.class).add(doc);
+        }
+        orders.insertOne(order);
     }
 }
