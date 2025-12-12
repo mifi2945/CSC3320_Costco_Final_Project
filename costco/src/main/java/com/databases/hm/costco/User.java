@@ -64,7 +64,6 @@ public class User {
         if  (user != null) {
             quantity = user.get("cart", Document.class).getInteger("quantity");
         }
-        //TODO: update the item, not add an extra one
         users.updateOne(eq("username", username),
                 push("cart", new Document("item_id", item)
                         .append("quantity", quantity)));
@@ -135,7 +134,7 @@ public class User {
                                 .append("total",
                                         new Document("$sum", "$total")))));
 
-        double total = result.first().getDouble("total");
+        double total = Math.floor(result.first().getDouble("total")*100)/100;
         addOrder(total);
         users.updateOne(eq("username", username),
                 set("cart", List.of()));
@@ -145,22 +144,39 @@ public class User {
     }
 
     @GetMapping("/num_orders")
-    public int getNumOrders(@RequestParam String username) {
+    public int getNumOrders() {
         MongoCollection<Document> orders = MongoController.getClient()
                 .getDatabase("costco").getCollection("orders");
         AggregateIterable<Document> result = orders.aggregate(Arrays.asList(new Document("$match",
                         new Document("username", username)),
                 new Document("$count", "orderId")));
 
-//        int total = result.first().getInteger("orderId");
+        if (result.first() == null) {
+            return 0;
+        }
 
         return result.first().getInteger("orderId");
     }
 
-//    @GetMapping("/total_spent")
-//    public double getTotalSpent(@RequestParam String username) {
-//        //todo
-//    }
+    @GetMapping("/total_spent")
+    public double getTotalSpent() {
+        MongoCollection<Document> orders = MongoController.getClient()
+                .getDatabase("costco").getCollection("orders");
+
+        AggregateIterable<Document> result = orders.aggregate(Arrays.asList(new Document("$match",
+                        new Document("username", username)),
+                new Document("$group",
+                        new Document("_id",
+                                new BsonNull())
+                                .append("total",
+                                        new Document("$sum", "$total")))));
+        if (result.first() == null) {
+            return 0;
+        }
+
+        return Math.floor(result.first().getDouble("total")*100)/100;
+
+    }
 
     private static void addOrder(double total) {
         MongoCollection<Document> users = MongoController.getClient()
@@ -190,7 +206,7 @@ public class User {
         for (Document item : cart) {
             Document doc =  new Document("_id", item.getObjectId("_id"))
                     .append("quantity", item.getInteger("quantity"));
-            items.add(item);
+            items.add(doc);
         }
         Document order = new Document("_id", new ObjectId())
                 .append("username", username)
