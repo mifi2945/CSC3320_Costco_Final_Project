@@ -168,15 +168,16 @@ public class User {
                         new Document("path", "$product"))));
 
         List<Document> cart = result.into(new ArrayList<>());
-        Document order = new Document("_id", new ObjectId())
-                .append("username", username)
-                .append("items", List.of())
-                .append("total", total);
+        List<Document> items = new ArrayList<>();
         for (Document item : cart) {
             Document doc =  new Document("_id", item.getObjectId("_id"))
-                    .append("quantity", item.getDouble("quantity"));
-            order.getList("items", Document.class).add(doc);
+                    .append("quantity", item.getInteger("quantity"));
+            items.add(item);
         }
+        Document order = new Document("_id", new ObjectId())
+                .append("username", username)
+                .append("items", items)
+                .append("total", total);
         orders.insertOne(order);
     }
 }
