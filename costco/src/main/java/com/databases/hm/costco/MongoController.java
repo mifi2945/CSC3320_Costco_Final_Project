@@ -7,17 +7,12 @@ import java.util.Map;
 
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Aggregates;
-import com.mongodb.client.model.Filters;
 import org.bson.Document;
 
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
 import static com.mongodb.client.model.Filters.*;
 
-import org.bson.conversions.Bson;
-import org.bson.json.JsonMode;
-import org.bson.json.JsonWriterSettings;
 import org.bson.types.ObjectId;
 
 import org.springframework.web.bind.annotation.*;
