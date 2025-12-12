@@ -5,6 +5,7 @@ import '../App.css';
 
 export default function Cart() {
     const [cartItems, setCartItems] = useState([]);
+    const [successMessage, setSuccessMessage] = useState('');
 
     useEffect(() => {
         fetch('http://localhost:8080/user/cart_items?username=' + localStorage.getItem('username'))
@@ -17,6 +18,22 @@ export default function Cart() {
             .then(data => setCartItems(data))
             .catch(err => console.error('Error fetching cart items:', err));
     }, []);
+
+    const placeOrder = () => {
+        fetch('http://localhost:8080/user/place_order', {
+            method: 'POST',
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to place order');
+            }
+            setSuccessMessage('Order placed successfully!');
+            setCartItems([]); // Clear cart after order
+            window.dispatchEvent(new Event('cart:updated')); // Refresh cart badge
+        })
+        .catch(err => console.error('Error placing order:', err));
+    };
+
 
     // Combine items by title and count quantities
     const getCartSummary = () => {
@@ -42,6 +59,7 @@ export default function Cart() {
             </div>
             
             <h2>Your Shopping Cart</h2>
+            {successMessage && <p className="successMessage">{successMessage}</p>}
             
             {cartItems.length === 0 ? (
                 <p>Your cart is empty</p>
@@ -68,9 +86,8 @@ export default function Cart() {
                         </tbody>
                     </table>
                     <h3>Total: ${calculateTotal().toFixed(2)}</h3>
-                    <button className="orderButton">Place Order</button>
+                    <button className="orderButton" onClick={placeOrder}>Place Order</button>
                 </div>
-                
             )}
         </div>
     );

@@ -106,7 +106,7 @@ public class User {
     }
 
     @PostMapping("/place_order")
-    public int placeOrder() {
+    public double placeOrder() {
         MongoCollection<Document> users = MongoController.getClient()
                 .getDatabase("costco").getCollection("users");
 
@@ -135,10 +135,11 @@ public class User {
                                 .append("total",
                                         new Document("$sum", "$total")))));
 
+        double total = result.first().getDouble("total");
         users.updateOne(eq("username", username),
-                push("cart", List.of()));
+                set("cart", List.of()));
 
-        return result.first().getInteger("total");
+        return total;
 
     }
 }
