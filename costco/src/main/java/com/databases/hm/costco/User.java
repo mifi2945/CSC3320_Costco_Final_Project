@@ -2,6 +2,7 @@ package com.databases.hm.costco;
 
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
+import org.bson.BsonNull;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.web.bind.annotation.*;
@@ -63,6 +64,7 @@ public class User {
         if  (user != null) {
             quantity = user.get("cart", Document.class).getInteger("quantity");
         }
+        //TODO: update the item, not add an extra one
         users.updateOne(eq("username", username),
                 push("cart", new Document("item_id", item)
                         .append("quantity", quantity)));
@@ -101,5 +103,42 @@ public class User {
         }
 
         return list;
+    }
+
+    @PostMapping("/place_order")
+    public int placeOrder() {
+        MongoCollection<Document> users = MongoController.getClient()
+                .getDatabase("costco").getCollection("users");
+
+        AggregateIterable<Document> result = users.aggregate(Arrays.asList(new Document("$match",
+                        new Document("username", username)),
+                new Document("$unwind",
+                        new Document("path", "$cart")),
+                new Document("$group",
+                        new Document("_id", "$cart.item_id")
+                                .append("quantity",
+                                        new Document("$count",
+                                                new Document()))),
+                new Document("$lookup",
+                        new Document("from", "costco")
+                                .append("localField", "_id")
+                                .append("foreignField", "_id")
+                                .append("as", "product")),
+                new Document("$unwind",
+                        new Document("path", "$product")),
+                new Document("$addFields",
+                        new Document("total",
+                                new Document("$multiply", Arrays.asList("$product.Price", "$quantity")))),
+                new Document("$group",
+                        new Document("_id",
+                                new BsonNull())
+                                .append("total",
+                                        new Document("$sum", "$total")))));
+
+        users.updateOne(eq("username", username),
+                push("cart", List.of()));
+
+        return result.first().getInteger("total");
+
     }
 }
