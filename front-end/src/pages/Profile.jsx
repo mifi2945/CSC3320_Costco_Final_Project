@@ -3,18 +3,38 @@ import { Link } from 'react-router-dom';
 import TopBar from '../components/TopBar';
 
 export default function Profile() {
-    const [username, setUsername] = useState('');
+    // const [username, setUsername] = useState('');
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    const [numOrders, setNumOrders] = useState(0);
+    const [totalSpent, setTotalSpent] = useState(0);
 
     useEffect(() => {
-        const savedUsername = localStorage.getItem('username');
-        if (savedUsername) {
-            setUsername(savedUsername);
-        }
+        // Fetch number of orders
+        fetch(`http://localhost:8080/user/num_orders`)
+            .then(response => response.json())
+            .then(data => {
+                setNumOrders(data);
+            })
+            .catch(error => {
+                console.error('Error fetching number of orders:', error);
+            });
+
+        //fetch total spent
+        fetch(`http://localhost:8080/user/total_spent`)
+            .then(response => response.json())
+            .then(data => {
+                setTotalSpent(data);
+            })
+            .catch(error => {
+                console.error('Error fetching total spent:', error);
+            });
+        
     }, []);
+
+
 
     const updatePassword = () => {
         if (!oldPassword || !newPassword) {
@@ -54,7 +74,7 @@ export default function Profile() {
         <div className="profilePage">
             <TopBar />
             <h2>User Profile</h2>
-            <h4>Username: {username}</h4>
+            {/* <h4>Username: {username}</h4> */}
             {/* input field for new password */}
             <div className="formGroup">
               <label htmlFor="oldPassword">Current Password:</label>
@@ -78,8 +98,8 @@ export default function Profile() {
             <button className="updatePasswordButton" onClick={updatePassword}>Update Password</button>
             {successMessage && <p className="successMessage">{successMessage}</p>}
             <h2>Purchase Information</h2>
-            <h4>Number of Orders: </h4>
-            <h4>Total Spent: </h4>
+            <h4>Number of Orders: {numOrders}</h4>
+            <h4>Total Spent: {totalSpent}</h4>
             <button className="logoutButton" onClick={() => {
                 localStorage.removeItem('username');
                 window.location.href = '/login';
