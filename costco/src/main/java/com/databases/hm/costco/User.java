@@ -144,6 +144,24 @@ public class User {
 
     }
 
+    @GetMapping("/num_orders")
+    public int getNumOrders(@RequestParam String username) {
+        MongoCollection<Document> orders = MongoController.getClient()
+                .getDatabase("costco").getCollection("orders");
+        AggregateIterable<Document> result = orders.aggregate(Arrays.asList(new Document("$match",
+                        new Document("username", username)),
+                new Document("$count", "orderId")));
+
+//        int total = result.first().getInteger("orderId");
+
+        return result.first().getInteger("orderId");
+    }
+
+//    @GetMapping("/total_spent")
+//    public double getTotalSpent(@RequestParam String username) {
+//        //todo
+//    }
+
     private static void addOrder(double total) {
         MongoCollection<Document> users = MongoController.getClient()
                 .getDatabase("costco").getCollection("users");
